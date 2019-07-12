@@ -2,7 +2,7 @@ package Domain
 
 import Model.Model.AccountInfomation
 
-trait Validations {
+object Validations {
     
     def checkNumberAccount (nroAccount: Long): Boolean = {
         if(nroAccount.isNaN) { return false }

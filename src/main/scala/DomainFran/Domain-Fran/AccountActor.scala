@@ -4,7 +4,9 @@ import akka.actor.{ Actor }
 
 import Model.Model._
 
-class AccountActor(accounts: Array[AccountInfomation] = Array[AccountInfomation]()) extends Actor with Validations {
+class AccountActor(
+      accounts: Array[AccountInfomation] = Array[AccountInfomation]()
+) extends Actor with Controller {
  
   val state = AccountState(accounts)
 
@@ -16,66 +18,17 @@ class AccountActor(accounts: Array[AccountInfomation] = Array[AccountInfomation]
 
   override def receive: Receive = {
 
-    case Create(accountInfomation: AccountInfomation) => {
+    case Create(accountInfomation: AccountInfomation) => { _create(accountInfomation, state) }
 
-      if (cheackAll(accountInfomation)) { 
-        // TODO: Call persistence creation (?)
-        state.addAccount(accountInfomation) 
-      } else { 
-        println("Informacion no validada: Create command") 
-      }
+    case Update(newInfoAccount: AccountInfomation) => { _update(newInfoAccount, state) }
 
-    }
+    case Accredit(nroAccount: Long, saldo: Int) => { _accredit(nroAccount, saldo, state) }
 
-    case Update(newInfoAccount: AccountInfomation) => {
+    case Debit(nroAccount: Long, saldo: Int) => { _debit(nroAccount, saldo, state) }
 
-      if (cheackAll(newInfoAccount)) { 
-        // TODO: Call persistence update (?)
-        state.accounts.map { oldInfoAccount =>
-          if (oldInfoAccount.nroCuenta.equals(newInfoAccount.nroCuenta)){
-            oldInfoAccount.updateSaldo(newInfoAccount.saldo)
-            oldInfoAccount.updateState(newInfoAccount.state)
-          }
-        } 
-      } else { 
-        println("Informacion no validada: Update command") 
-      }
+    case UpdateState(nroAccount: Long, _state: Char) => { _updateState(nroAccount, _state, state) }
 
-    }
-
-    case UpdateSaldo(nroAccount: Long, saldo: Int) => {
-
-      if (checkNumberAccount(nroAccount)) { 
-        // TODO: Call persistence update (?)
-        state.accounts.map { oldInfoAccount =>
-          if (oldInfoAccount.nroCuenta.equals(nroAccount)){
-            oldInfoAccount.updateSaldo(saldo)
-          }
-        } 
-      } else { 
-        println("Informacion no validada: UpdateSaldo command") 
-      }
-
-    }
-
-    case UpdateState(nroAccount: Long, _state: Char) => {
-
-      if (checkNumberAccount(nroAccount)) { 
-        // TODO: Call persistence update (?)
-        state.accounts.map { oldInfoAccount =>
-          if (oldInfoAccount.nroCuenta.equals(nroAccount) && !oldInfoAccount.state.equals(_state)){
-            oldInfoAccount.updateState(_state)
-          }
-        } 
-      } else { 
-        println("Informacion no validada: UpdateState command") 
-      }
-
-    }
-
-    case Show => {
-      println(state.accounts.mkString("\n"))
-    }
+    case Show => { println(state.accounts.mkString("\n")) }
 
   }
 
