@@ -1,6 +1,6 @@
 package Domain
 
-import Model.Model.AccountInfomation
+import Model.Model._
 
 object Validations {
     

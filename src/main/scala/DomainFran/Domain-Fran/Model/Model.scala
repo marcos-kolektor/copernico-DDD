@@ -1,15 +1,22 @@
 package Model
 
+import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
+import spray.json.DefaultJsonProtocol
+
 object Model {
 
     case class AccountInfomation(
-        nroCuenta : Long = 0,
-        var saldo : Int = 0,
-        state : Char = 'A'
+          nroCuenta : Long = 0,
+          var saldo : Int = 0,
+          state : Char = 'A'
     ) {
         // No funciona el copy o insmutabilidad. Inmutabilidad quitada para poder cambiar los datos
         def updateSaldo(newSaldo: Int) = saldo = newSaldo
         def updateState(_state: Char) = copy(state = _state)
+    }
+
+    object AccountInformationJsonSupport extends DefaultJsonProtocol with SprayJsonSupport {
+        implicit val PortofolioFormats = jsonFormat3(AccountInfomation)
     }
 
     case class AccountState(
@@ -19,6 +26,7 @@ object Model {
     sealed trait Command
 
         final case object Show extends Command
+        final case class ShowOne(nroAccount: Long) extends Command
         final case class Create(accountState: AccountInfomation) extends Command
         final case class Update(accountState: AccountInfomation) extends Command
         final case class Accredit(nroAccount: Long, saldo: Int) extends Command

@@ -25,8 +25,8 @@ object Aplication extends App {
 
     accountsActor ! Create(accountInfomation)
     Thread.sleep(2000)
-    accountsActor ! Show 
-    accountsActor ! Update(newInfoAccount) 
+    accountsActor ! Show
+    accountsActor ! Update(newInfoAccount)
     Thread.sleep(3000)
     accountsActor ! Show
     accountsActor ! Accredit(12345678910111L, 250)

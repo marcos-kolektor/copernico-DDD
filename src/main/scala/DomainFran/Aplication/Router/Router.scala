@@ -1,32 +1,27 @@
 package Router
 
 // importing akka...Directives._ makes `get` and `complete` avaialable in scope
+import Model.Model.ShowOne
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import akka.actor.ActorSystem
+import Controller._
+import akka.actor.{ ActorRef }
 
 object Router {
 
     // complete("Hello World") // The complete method is what is typically used in Akka HTTP when we want to return an HTTP response to the client.
 
-    lazy val routes: Route =
+
+    def routes(actorRef: ActorRef): Route = {
         pathPrefix("accounts") {
-            path("account1") {
-                get {
-                    complete("Cuenta 1")
-                }
-            } ~ //don't forget `~`
-            path("account2") {
-                get {
-                      complete("Cuenta 2")
-                }
-            } ~
-            path("account3") {
-                get {
-                      complete("Cuenta List")
-                }
-            }
+            path("AllAccounts") { _allAccounts(actorRef) } ~ //don't forget `~`
+            path("CreateAccount") { _createAccount(actorRef) } ~
+            path("EditAccount") { _editAccount() } ~
+            path("Accredit") { _accredit(actorRef) } ~
+            path("Debit") { _debit() } ~
+            path("SearchAccount" / LongNumber) { numberAccount =>  _searchAccount(numberAccount, actorRef) }
         }
+    }
 
 
 }

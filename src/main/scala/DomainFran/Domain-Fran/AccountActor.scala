@@ -2,7 +2,7 @@ package Domain
 
 import akka.actor.{ Actor }
 
-import Model.Model._
+import Model.Model._ 
 
 class AccountActor(
       accounts: Array[AccountInfomation] = Array[AccountInfomation]()
@@ -28,7 +28,14 @@ class AccountActor(
 
     case UpdateState(nroAccount: Long, _state: Char) => { _updateState(nroAccount, _state, state) }
 
-    case Show => { println(state.accounts.mkString("\n")) }
+    case ShowOne(nroAccount: Long) => { _showOne(nroAccount, state) }
+
+    case Show => {
+
+      // TODO: Retun status data
+      println(state.accounts.mkString("\n"))
+
+    }
 
   }
 
