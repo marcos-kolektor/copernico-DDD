@@ -12,6 +12,7 @@ import akka.util.Timeout
 import Model.Model.AccountInfomation
 import Model.Model.AccountState
 import Model.Model._
+import ModelAux.ResponseToClient
 import ModelAux.AccountInfomationAux
 import ModelAux.AccountInformationJsonSupport._
 
@@ -26,14 +27,14 @@ object Controller {
     get  {
       val future = actorRef ? Show
       val result = Await.result(future, timeout.duration).asInstanceOf[AccountState]
-      complete(result.accounts.mkString("\n"))
+      complete(result.accounts)
     }
 
   def _searchAccount(numberAccount: Long, actorRef: ActorRef): Route =
     get  {
       val future = actorRef ? ShowOne(numberAccount)
       val result = Await.result(future, timeout.duration).asInstanceOf[AccountInfomation]
-      complete(result.toString)
+      complete(result)
     }
 
   def _createAccount(actorRef: ActorRef): Route =
@@ -55,13 +56,13 @@ object Controller {
           val result = Await.result(future, timeout.duration).asInstanceOf[Boolean]
 
           if(!result){
-            complete("The account was not created correctly")
+            complete(ResponseToClient("The account was not created correctly"))
           } else {
-            complete("Account created correctly")
+            complete(ResponseToClient("Account created correctly"))
           }
 
         } else {
-          complete("Account already exists")
+          complete(ResponseToClient("Account already exists"))
         }
       }
     }
@@ -74,9 +75,9 @@ object Controller {
           val result = Await.result(future, timeout.duration).asInstanceOf[Boolean]
 
           if(!result){
-            complete("The account was not updated correctly")
+            complete(ResponseToClient("The account was not updated correctly"))
           } else {
-            complete("Account updated correctly")
+            complete(ResponseToClient("Account updated correctly"))
           }
 
       }
@@ -90,9 +91,9 @@ object Controller {
         val result = Await.result(future, timeout.duration).asInstanceOf[Int]
 
         if(result == 0){
-          complete("The balance did not update correctly")
+          complete(ResponseToClient("The balance did not update correctly"))
         } else {
-          complete(s"The balance was updated correctly. New balance of the account ${information.nroCuenta} is ${result}.")
+          complete(ResponseToClient(s"The balance was updated correctly. New balance of the account ${information.nroCuenta} is ${result}."))
         }
       }
     }
@@ -105,9 +106,9 @@ object Controller {
         val result = Await.result(future, timeout.duration).asInstanceOf[Int]
 
         if(result == 0){
-          complete("The balance did not update correctly")
+          complete(ResponseToClient("The balance did not update correctly"))
         } else {
-          complete(s"The balance was updated correctly. New balance of the account ${information.nroCuenta} is ${result}.")
+          complete(ResponseToClient(s"The balance was updated correctly. New balance of the account ${information.nroCuenta} is ${result}."))
         }
       }
     }
