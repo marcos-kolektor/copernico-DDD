@@ -6,10 +6,9 @@ import akka.http.scaladsl.server.Directives.{as, complete, entity, get, post, pu
 import akka.http.scaladsl.server.Route
 import akka.actor.ActorRef
 
-import Model.Model.AccountInformationJsonSupport._
 import Model.Model.AccountInfomation
-
-
+import ModelAux.AccountInfomationAux
+import ModelAux.AccountInformationJsonSupport._
 
 object Controller {
 
@@ -51,9 +50,21 @@ object Controller {
       }
     }
 
-  def _editAccount(): Route =
+  def _editAccount(actorRef: ActorRef): Route =
     put {
       entity(as[AccountInfomation]) { information =>
+
+        val account: AccountInfomation = new AccountInfomation(
+          nroCuenta = information.nroCuenta,
+          saldo = information.saldo,
+          state = information.state
+        )
+
+        actorRef ! Update(account)
+
+        Thread.sleep(1000)
+        actorRef ! Show
+
         complete(
           s"Account: ${information.nroCuenta} " +
             s"- saldo: ${information.saldo}" +
@@ -63,7 +74,7 @@ object Controller {
 
   def _accredit(actorRef: ActorRef): Route =
     put {
-      entity(as[AccountInfomation]) { information =>
+      entity(as[AccountInfomationAux]) { information =>
 
         actorRef ! Accredit(information.nroCuenta, information.saldo)
 
@@ -73,13 +84,15 @@ object Controller {
       }
     }
 
-  def _debit(): Route =
+  def _debit(actorRef: ActorRef): Route =
     put {
-      entity(as[AccountInfomation]) { information =>
+      entity(as[AccountInfomationAux]) { information =>
+
+        actorRef ! Debit(information.nroCuenta, information.saldo)
+
         complete(
           s"Account: ${information.nroCuenta} " +
-            s"- saldo: ${information.saldo}" +
-            s"- status: ${information.state}")
+            s"- saldo: ${information.saldo}")
       }
     }
 

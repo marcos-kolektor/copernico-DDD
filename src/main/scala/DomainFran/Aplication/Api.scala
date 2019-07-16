@@ -19,7 +19,7 @@ object Api {
 
 
         // remember to make them implicit!!
-        implicit val system = ActorSystem("Main")       // for Akka Actor
+        implicit val system = ActorSystem("AccountSystemService")       // for Akka Actor
         implicit val materializer = ActorMaterializer() // for Akka Stream
 
         val accountsActor = system.actorOf(Props(new AccountActor(Array())), name = "accountsActor")
@@ -28,7 +28,7 @@ object Api {
         implicit val executionContext = system.dispatcher
         val bindingFuture = Http().bindAndHandle(routes(accountsActor), "localhost", 8080)
 
-        println(s"Server online at http://localhost:8080/accounts/\nPress RETURN to stop...")
+        println(s"Server online at http://localhost:8080/accounts/\nPress ENTER to stop...")
 
         StdIn.readLine() // let it run until user presses return
 
