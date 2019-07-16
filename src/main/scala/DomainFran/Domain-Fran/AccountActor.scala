@@ -18,24 +18,34 @@ class AccountActor(
 
   override def receive: Receive = {
 
-    case Create(accountInfomation: AccountInfomation) => { _create(accountInfomation, state) }
+    case Create(accountInfomation: AccountInfomation) => {
+      val result: Boolean = _create(accountInfomation, state)
+      sender() ! result
+    }
 
-    case Update(newInfoAccount: AccountInfomation) => { _update(newInfoAccount, state) }
+    case Update(newInfoAccount: AccountInfomation) => {
+      val result: Boolean = _update(newInfoAccount, state)
+      sender() ! true
+    }
 
-    case Accredit(nroAccount: Long, saldo: Int) => { _accredit(nroAccount, saldo, state) }
+    case Accredit(nroAccount: Long, saldo: Int) => {
+      val response: Int  = _accredit(nroAccount, saldo, state)
+      sender() ! response
+    }
 
-    case Debit(nroAccount: Long, saldo: Int) => { _debit(nroAccount, saldo, state) }
+    case Debit(nroAccount: Long, saldo: Int) => {
+      val response: Int  = _debit(nroAccount, saldo, state)
+      sender() ! response
+    }
 
     case UpdateState(nroAccount: Long, _state: Char) => { _updateState(nroAccount, _state, state) }
 
-    case ShowOne(nroAccount: Long) => { _showOne(nroAccount, state) }
-
-    case Show => {
-
-      // TODO: Retun status data
-      println(state.accounts.mkString("\n"))
-
+    case ShowOne(nroAccount: Long) => {
+      val response: AccountInfomation  = _showOne(nroAccount, state)
+      sender() ! response
     }
+
+    case Show => { sender() ! state }
 
   }
 

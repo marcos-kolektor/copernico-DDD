@@ -7,28 +7,32 @@ import akka._
 
 trait Controller {
 
-    def _create(accountInfomation: AccountInfomation, state: AccountState) = {
+    def _create(accountInfomation: AccountInfomation, state: AccountState): Boolean = {
       if (cheackAll(accountInfomation)) {
         // TODO: Call persistence creation (?)
         state.addAccount(accountInfomation)
-        println("Create command successfully completed")
+        return true
       } else {
         println("Informacion no validada: Create command")
+        return false
       }
     }
 
-    def _update(newInfoAccount: AccountInfomation, state: AccountState) = {
+    def _update(newInfoAccount: AccountInfomation, state: AccountState): Boolean = {
       if (cheackAll(newInfoAccount)) {
         // TODO: Call persistence update (?)
         state.accounts.map { oldInfoAccount =>
           if (oldInfoAccount.nroCuenta.equals(newInfoAccount.nroCuenta)){
             oldInfoAccount.updateSaldo(newInfoAccount.saldo)
             oldInfoAccount.updateState(newInfoAccount.state)
+            println("Update command successfully completed")
+            return true
           }
         }
-        println("Update command successfully completed")
+        return false
       } else {
         println("Informacion no validada: Update command")
+        return false
       }
     }
 
@@ -38,15 +42,15 @@ trait Controller {
         state.accounts.map { oldInfoAccount =>
           if (oldInfoAccount.nroCuenta.equals(nroAccount) && !oldInfoAccount.state.equals(_state)){
             oldInfoAccount.updateState(_state)
+            println("UpdateState command successfully completed")
           }
         }
-        println("UpdateState command successfully completed")
       } else {
         println("Informacion no validada: UpdateState command")
       }
     }
 
-    def _accredit(nroAccount: Long, saldo: Int, state: AccountState) = {
+    def _accredit(nroAccount: Long, saldo: Int, state: AccountState): Int  = {
 
       if (checkNumberAccount(nroAccount)) {
         var newSaldo: Int = 0 
@@ -55,16 +59,19 @@ trait Controller {
           if (oldInfoAccount.nroCuenta.equals(nroAccount)){
             newSaldo = saldo + oldInfoAccount.saldo
             oldInfoAccount.updateSaldo(newSaldo)
+            println("Accredit command successfully completed")
+            return oldInfoAccount.saldo
           }
         }
-        println("Accredit command successfully completed")
+        return 0
       } else { 
         println("Informacion no validada: Accredit command")
+        return 0
       }
 
     }
 
-    def _debit(nroAccount: Long, saldo: Int, state: AccountState) = {
+    def _debit(nroAccount: Long, saldo: Int, state: AccountState): Int = {
       if (checkNumberAccount(nroAccount)) {
 
         var newSaldo: Int = 0
@@ -74,24 +81,28 @@ trait Controller {
           if (oldInfoAccount.nroCuenta.equals(nroAccount)){
             newSaldo = oldInfoAccount.saldo - saldo
             oldInfoAccount.updateSaldo(newSaldo)
+            println("Debit command successfully completed")
+            return oldInfoAccount.saldo
           }
         }
-        println("Debit command successfully completed")
+        return 0
       } else {
         println("Informacion no validada: Debit command")
+        return 0
       }
     }
 
-  def _showOne(nroAccount: Long, state: AccountState) = {
+    def _showOne(nroAccount: Long, state: AccountState): AccountInfomation  = {
     if (checkNumberAccount(nroAccount)) {
       state.accounts.map { oldInfoAccount =>
         if (oldInfoAccount.nroCuenta.equals(nroAccount)){
-          println(oldInfoAccount.toString)
+          return oldInfoAccount
         }
       }
-      println("ShowOne command successfully completed")
+      return new AccountInfomation()
     } else {
       println("Informacion no validada: ShowOne command")
+      return new AccountInfomation()
     }
   }
 

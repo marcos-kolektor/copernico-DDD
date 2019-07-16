@@ -5,11 +5,12 @@ object Model {
     case class AccountInfomation(
           nroCuenta : Long = 0,
           var saldo : Int = 0,
-          state : Char = 'A'
+          var state : Char = 'A'
     ) {
         // No funciona el copy o insmutabilidad. Inmutabilidad quitada para poder cambiar los datos
         def updateSaldo(newSaldo: Int) = saldo = newSaldo
-        def updateState(_state: Char) = copy(state = _state)
+        //def updateState(_state: Char) = copy(state = _state)
+        def updateState(_state: Char) = state = _state
     }
 
     case class AccountState(
