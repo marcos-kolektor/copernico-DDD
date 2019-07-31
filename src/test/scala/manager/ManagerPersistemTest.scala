@@ -22,7 +22,7 @@ class ManagerPersistemTest(_system: ActorSystem)
       //val arthur = system.actorOf(AccountActor.props(mount  = 5000, active = "B"), "Arthur")
       val tm = system.actorOf(AccountPersistentActor.props(), "tm2")
       diana.!("initial")(testProbe.ref)
-      //tm ! AddMonetAccount(123456L, 20L, "A", 350000L)
+      tm ! AddMonetAccount(123456L, 20L, "A", 350000L)
       Thread.sleep(5000)
       diana.!("initial")(testProbe.ref)
     }

@@ -1,8 +1,8 @@
 package DDDActores.domain.events
 
-import DDDActores.domain.events.AccountEventsPublish.{Subscribe, Unsubscribe}
-import akka.actor.{Actor, ActorLogging, ActorRef}
-import akka.event.{ActorEventBus, LookupClassification}
+import DDDActores.domain.events.AccountEventsPublish.{ Subscribe, Unsubscribe }
+import akka.actor.{ Actor, ActorLogging, ActorRef }
+import akka.event.{ ActorEventBus, LookupClassification }
 
 object AccountEventsPublish {
 
@@ -41,6 +41,5 @@ class AccountEventsPublish extends Actor
       log info s"unsubscribing for $classifier from $sender"
       unsubscribe(sender, classifier)
   }
-
 
 }
