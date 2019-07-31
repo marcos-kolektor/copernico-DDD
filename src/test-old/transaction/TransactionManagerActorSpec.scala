@@ -22,7 +22,7 @@ class TransactionManagerActorSpec(_system: ActorSystem)
   "A TransactionManagerActorSpec" should {
     "demonstrate compensation in case of insufficient balance" in {
       val testProbe = TestProbe()
-      val diana = system.actorOf(AccountActor.props(active  = true, balance = 500), "Diana")
+      val diana = system.actorOf(AccountActor.props(active  = true, balance = 15000), "Diana")
       val arthur = system.actorOf(AccountActor.props(active  = true, balance = 10000), "Arthur")
       val tm = system.actorOf(TransactionManagerActor.props(), "tm2")
       diana.!("print")(testProbe.ref)
