@@ -25,4 +25,3 @@ class InMemoryEggRepository(implicit ec: ExecutionContext) extends EggRepository
   }
 }
 
-
